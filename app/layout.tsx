@@ -25,7 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} h-full`}>
-      <body className="min-h-full flex flex-col antialiased">
+      <body
+        className="min-h-full flex flex-col antialiased"
+        suppressHydrationWarning
+      >
         <ReduxProvider>
           <SkipLink />
           {children}

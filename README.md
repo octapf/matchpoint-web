@@ -104,7 +104,23 @@ If Matchpoint uses **`CORS_ALLOWED_ORIGINS`**, add this site’s origin (e.g. `h
 
 ## Deploy (Vercel)
 
-Import the repo, set `NEXT_PUBLIC_MATCHPOINT_API_URL` in the project **Environment Variables**, and deploy. Optional: attach a custom domain under **Settings → Domains**.
+### Continuous deployment from GitHub
+
+Deployments on **push** are handled by **Vercel’s Git integration** (no extra workflow file required).
+
+1. Open [Vercel Dashboard](https://vercel.com) → **Add New…** → **Project**.
+2. **Import** this repository (`octapf/matchpoint-web`). Grant the Vercel GitHub App access to the repo if prompted.
+3. Configure **Environment Variables**: add `NEXT_PUBLIC_MATCHPOINT_API_URL` (same value as in `.env.local`, no trailing slash).
+4. Click **Deploy**.
+
+After that:
+
+- Every **push to `main`** triggers a **Production** deployment.
+- **Pull requests** get **Preview** URLs by default.
+
+**Already have a Vercel project without Git?** → Project **Settings → Git** → **Connect Git Repository**, choose this repo and **Production Branch** `main`.
+
+Optional: **Settings → Domains** for a custom hostname.
 
 ---
 
