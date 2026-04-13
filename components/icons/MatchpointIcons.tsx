@@ -8,6 +8,7 @@ export {
   IoChevronForward as IconChevronForward,
   IoDocumentTextOutline as IconDocumentTextOutline,
   IoPeople as IconPeople,
+  IoPersonOutline as IconPersonOutline,
   IoRefresh as IconRefresh,
   IoTrophy as IconTrophy,
 } from "react-icons/io5";

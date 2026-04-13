@@ -56,9 +56,6 @@ export function WaitlistDetailSection({
       <h3 id="wl-detail-h" className="text-sm font-bold text-mp-yellow">
         Detalle lista de espera
       </h3>
-      <p className="mt-1 text-xs text-mp-text-muted">
-        Orden de llegada por división. Los nombres de usuario no son públicos sin iniciar sesión.
-      </p>
       <div className="mt-4 space-y-6">
         {DIV_ORDER.map((div) => {
           const rows = waitlistByDivision[div] ?? [];

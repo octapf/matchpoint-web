@@ -117,10 +117,6 @@ export function TabResumen({
         totalCount={t.waitlistCount ?? 0}
         waitlistByDivision={waitlistByDivision}
       />
-
-      <p className="text-xs text-mp-text-muted">
-        Inscripciones y gestión de torneos en la app Matchpoint.
-      </p>
     </div>
   );
 }
