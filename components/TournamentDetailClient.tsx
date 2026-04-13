@@ -4,10 +4,11 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { isApiConfigured } from "@/lib/config";
+import { getTournamentPollIntervalMs, isApiConfigured } from "@/lib/config";
 import {
   clearTournamentPage,
   loadTournamentPage,
+  refreshTournamentPage,
 } from "@/store/features/tournamentsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { DetailTabs } from "@/components/tournament-detail/DetailTabs";
@@ -40,6 +41,8 @@ export function TournamentDetailClient({ id }: { id: string }) {
   const { page, detailStatus, detailError } = useAppSelector((s) => s.tournaments);
   const configured = isApiConfigured();
 
+  const pollMs = getTournamentPollIntervalMs();
+
   useEffect(() => {
     if (!configured) return;
     void dispatch(loadTournamentPage(id));
@@ -47,6 +50,31 @@ export function TournamentDetailClient({ id }: { id: string }) {
       dispatch(clearTournamentPage());
     };
   }, [dispatch, id, configured]);
+
+  /** Near–live updates: re-fetch detail + teams on an interval; pause when tab is hidden. */
+  useEffect(() => {
+    if (!configured || pollMs <= 0 || detailStatus !== "succeeded") return;
+
+    const run = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+        return;
+      }
+      void dispatch(refreshTournamentPage(id));
+    };
+
+    const intervalId = window.setInterval(run, pollMs);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        run();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [configured, detailStatus, dispatch, id, pollMs]);
 
   const tournament = page?.tournament;
   const teams = page?.teams ?? [];
@@ -122,6 +150,12 @@ export function TournamentDetailClient({ id }: { id: string }) {
 
         {tournament && detailStatus === "succeeded" && (
           <article className="rounded-2xl border border-mp-surface-light bg-mp-surface p-5 sm:p-8">
+            {pollMs > 0 ? (
+              <p className="mb-4 text-xs text-mp-text-muted" role="status">
+                Actualización automática cada {Math.round(pollMs / 1000)} s con la página
+                visible (partidos y clasificación se refrescan desde la API).
+              </p>
+            ) : null}
             <p className="text-sm text-mp-text-muted">
               {formatRange(tournament.startDate, tournament.endDate)}
             </p>

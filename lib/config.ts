@@ -21,3 +21,18 @@ export function getApiBaseUrl(): string | null {
 export function isApiConfigured(): boolean {
   return getApiBaseUrl() !== null;
 }
+
+/**
+ * Interval (ms) to re-fetch tournament detail while the detail page is open.
+ * Set `NEXT_PUBLIC_TOURNAMENT_POLL_MS` — e.g. `30000` for 30s. `0` disables polling.
+ * Default: 30000 when unset (read-only “near live” updates without backend WebSockets).
+ */
+export function getTournamentPollIntervalMs(): number {
+  const raw = process.env.NEXT_PUBLIC_TOURNAMENT_POLL_MS?.trim();
+  if (raw === "0") return 0;
+  if (!raw) return 30_000;
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 0) return 30_000;
+  if (n === 0) return 0;
+  return Math.min(Math.max(n, 5_000), 120_000);
+}

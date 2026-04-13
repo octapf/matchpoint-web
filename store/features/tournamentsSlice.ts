@@ -4,6 +4,14 @@ import { fetchTeamsForTournament } from "@/lib/api/teams";
 import type { Team } from "@/lib/types/team";
 import type { TournamentDetail, TournamentListItem } from "@/lib/types/tournament";
 
+async function fetchTournamentPageData(id: string) {
+  const [tournament, teams] = await Promise.all([
+    fetchTournamentDetail(id),
+    fetchTeamsForTournament(id),
+  ]);
+  return { tournament, teams };
+}
+
 export const loadTournaments = createAsyncThunk(
   "tournaments/loadList",
   async (arg: { status?: string } | undefined, { rejectWithValue }) => {
@@ -20,11 +28,20 @@ export const loadTournamentPage = createAsyncThunk(
   "tournaments/loadPage",
   async (id: string, { rejectWithValue }) => {
     try {
-      const [tournament, teams] = await Promise.all([
-        fetchTournamentDetail(id),
-        fetchTeamsForTournament(id),
-      ]);
-      return { tournament, teams };
+      return await fetchTournamentPageData(id);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Failed to load";
+      return rejectWithValue(message);
+    }
+  },
+);
+
+/** Background refresh: same data as load, without flipping detail to “loading” (no skeleton). */
+export const refreshTournamentPage = createAsyncThunk(
+  "tournaments/refreshPage",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      return await fetchTournamentPageData(id);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to load";
       return rejectWithValue(message);
@@ -93,6 +110,14 @@ const tournamentsSlice = createSlice({
           typeof action.payload === "string"
             ? action.payload
             : "Unknown error";
+      })
+      .addCase(refreshTournamentPage.fulfilled, (state, action) => {
+        if (state.detailStatus === "succeeded") {
+          state.page = action.payload;
+        }
+      })
+      .addCase(refreshTournamentPage.rejected, () => {
+        /* keep showing last good data on silent poll failure */
       });
   },
 });
