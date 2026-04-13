@@ -1,4 +1,4 @@
-import type { TournamentDivision } from "@/lib/types/tournament";
+import type { TournamentCategory, TournamentDivision } from "@/lib/types/tournament";
 
 export interface Team {
   _id: string;
@@ -7,6 +7,6 @@ export interface Team {
   division?: TournamentDivision;
   groupIndex?: number;
   playerIds?: string[];
-  category?: string;
+  category?: TournamentCategory | string;
   createdAt?: string;
 }

@@ -1,4 +1,6 @@
 import type { TournamentDetail } from "@/lib/types/tournament";
+import { categoryLabel } from "@/lib/format/category";
+import { divisionLabel } from "@/lib/format/division";
 
 type TabResumenProps = {
   tournament: TournamentDetail;
@@ -6,6 +8,8 @@ type TabResumenProps = {
 };
 
 export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
+  const snap = t.categoriesSnapshot;
+
   return (
     <div className="space-y-4">
       <p className="text-sm text-mp-text-secondary">
@@ -51,6 +55,45 @@ export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
           </div>
         )}
       </dl>
+
+      {snap?.divisions?.length ? (
+        <section className="rounded-xl border border-mp-violet/35 bg-mp-violet/5 p-4" aria-labelledby="cat-snap-h">
+          <h3 id="cat-snap-h" className="text-sm font-bold text-mp-yellow">
+            Categorías (Oro · Plata · Bronce)
+          </h3>
+          <p className="mt-1 text-xs text-mp-text-muted">
+            Cuadros generados el{" "}
+            {new Date(snap.computedAt).toLocaleString("es-AR", {
+              dateStyle: "short",
+              timeStyle: "short",
+            })}
+          </p>
+          <ul className="mt-3 space-y-3">
+            {snap.divisions.map((row, i) => (
+              <li key={`${String(row.division)}-${i}`}>
+                <p className="text-xs font-semibold uppercase text-mp-text-secondary">
+                  {divisionLabel(String(row.division))}
+                </p>
+                <ul className="mt-1 space-y-1 pl-2">
+                  {row.categories.map((c) => (
+                    <li
+                      key={c.category}
+                      className="flex flex-wrap justify-between gap-2 text-sm text-mp-text"
+                    >
+                      <span>{categoryLabel(c.category)}</span>
+                      <span className="text-mp-text-muted">
+                        {c.teamIds?.length ?? 0} equipos · {c.matchIds?.length ?? 0}{" "}
+                        partidos
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <p className="text-xs text-mp-text-muted">
         Vista solo lectura. Inscripciones y gestión en la app Matchpoint.
       </p>

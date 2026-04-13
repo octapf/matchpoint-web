@@ -9,6 +9,8 @@ export type TournamentPhase =
 
 export type TournamentDivision = "men" | "women" | "mixed";
 
+export type TournamentCategory = "Gold" | "Silver" | "Bronze";
+
 export interface DivisionCounts {
   men: number;
   women: number;
@@ -30,6 +32,18 @@ export interface Tournament {
   pointsToWin?: number;
   setsPerMatch?: number;
   divisions?: TournamentDivision[];
+  /** When classification is finalized — bracket snapshot (optional). */
+  categoriesSnapshot?: {
+    computedAt: string;
+    divisions: {
+      division: TournamentDivision | string;
+      categories: {
+        category: TournamentCategory;
+        teamIds: string[];
+        matchIds: string[];
+      }[];
+    }[];
+  };
 }
 
 /** List endpoint attaches aggregate counts. */

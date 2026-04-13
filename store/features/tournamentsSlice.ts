@@ -1,15 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchTournamentDetail, fetchTournamentsList } from "@/lib/api/tournaments";
+import { fetchEntriesForTournament } from "@/lib/api/entries";
 import { fetchTeamsForTournament } from "@/lib/api/teams";
+import type { Entry } from "@/lib/types/entry";
 import type { Team } from "@/lib/types/team";
 import type { TournamentDetail, TournamentListItem } from "@/lib/types/tournament";
 
 async function fetchTournamentPageData(id: string) {
-  const [tournament, teams] = await Promise.all([
+  const [tournament, teams, entries] = await Promise.all([
     fetchTournamentDetail(id),
     fetchTeamsForTournament(id),
+    fetchEntriesForTournament(id).catch((): Entry[] => []),
   ]);
-  return { tournament, teams };
+  return { tournament, teams, entries };
 }
 
 export const loadTournaments = createAsyncThunk(
@@ -53,8 +56,8 @@ type TournamentsState = {
   list: TournamentListItem[];
   listStatus: "idle" | "loading" | "succeeded" | "failed";
   listError: string | null;
-  /** Detail + teams for current route. */
-  page: { tournament: TournamentDetail; teams: Team[] } | null;
+  /** Detail + teams + entries for current route. */
+  page: { tournament: TournamentDetail; teams: Team[]; entries: Entry[] } | null;
   detailStatus: "idle" | "loading" | "succeeded" | "failed";
   detailError: string | null;
 };

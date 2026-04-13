@@ -15,6 +15,7 @@ import { DetailTabs } from "@/components/tournament-detail/DetailTabs";
 import type { DetailTabId } from "@/components/tournament-detail/DetailTabs";
 import { TabResumen } from "@/components/tournament-detail/TabResumen";
 import { TabEquipos } from "@/components/tournament-detail/TabEquipos";
+import { TabJugadores } from "@/components/tournament-detail/TabJugadores";
 import { TabPartidos } from "@/components/tournament-detail/TabPartidos";
 import { TabClasificacion } from "@/components/tournament-detail/TabClasificacion";
 
@@ -78,6 +79,7 @@ export function TournamentDetailClient({ id }: { id: string }) {
 
   const tournament = page?.tournament;
   const teams = page?.teams ?? [];
+  const entries = page?.entries ?? [];
 
   const hasMatches = useMemo(
     () => (tournament?.matches?.length ?? 0) > 0,
@@ -94,16 +96,22 @@ export function TournamentDetailClient({ id }: { id: string }) {
       return <TabResumen tournament={tournament} formatRange={formatRange} />;
     }
     if (tab === "equipos") {
-      return <TabEquipos teams={teams} />;
+      return (
+        <TabEquipos teams={teams} matches={tournament.matches ?? []} />
+      );
+    }
+    if (tab === "jugadores") {
+      return <TabJugadores entries={entries} teams={teams} />;
     }
     if (tab === "partidos") {
       return (
         <TabPartidos matches={tournament.matches ?? []} teams={teams} />
       );
     }
-    return (
-      <TabClasificacion standings={tournament.standings ?? []} />
-    );
+    if (tab === "clasificacion") {
+      return <TabClasificacion standings={tournament.standings ?? []} />;
+    }
+    return null;
   };
 
   const headerTitle =

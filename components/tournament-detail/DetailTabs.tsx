@@ -2,11 +2,17 @@
 
 import { useId, useState } from "react";
 
-export type DetailTabId = "resumen" | "equipos" | "partidos" | "clasificacion";
+export type DetailTabId =
+  | "resumen"
+  | "equipos"
+  | "jugadores"
+  | "partidos"
+  | "clasificacion";
 
 const TABS: { id: DetailTabId; label: string }[] = [
   { id: "resumen", label: "Resumen" },
   { id: "equipos", label: "Equipos" },
+  { id: "jugadores", label: "Jugadores" },
   { id: "partidos", label: "Partidos" },
   { id: "clasificacion", label: "Clasificación" },
 ];
