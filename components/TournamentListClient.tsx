@@ -89,7 +89,7 @@ export function TournamentListClient() {
 
       <main
         id="main-content"
-        className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8"
+        className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8 xl:max-w-[100rem]"
         tabIndex={-1}
       >
         {!configured && (
@@ -144,34 +144,36 @@ export function TournamentListClient() {
         )}
 
         {sortedList.length > 0 && (
-          <div className="space-y-8">
-            <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-              <div className="lg:col-span-7">
-                <TournamentsCalendar
-                  tournaments={sortedList}
-                  visibleMonth={visibleMonth}
-                  onPrevMonth={onPrevMonth}
-                  onNextMonth={onNextMonth}
-                  selectedId={selectedId}
-                  onSelectTournament={selectTournament}
-                />
-              </div>
-              <div className="lg:col-span-5">
-                <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
-                  Detalle del torneo
-                </h2>
-                <HomeTournamentDetail tournament={selectedTournament} />
-              </div>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 xl:items-start xl:gap-4">
+            <div className="min-w-0 xl:min-h-0">
+              <TournamentsCalendar
+                tournaments={sortedList}
+                visibleMonth={visibleMonth}
+                onPrevMonth={onPrevMonth}
+                onNextMonth={onNextMonth}
+                selectedId={selectedId}
+                onSelectTournament={selectTournament}
+              />
             </div>
 
-            <section aria-labelledby="list-heading">
+            <div className="min-w-0 xl:min-h-0">
+              <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
+                Detalle del torneo
+              </h2>
+              <HomeTournamentDetail tournament={selectedTournament} />
+            </div>
+
+            <section
+              className="flex min-h-0 min-w-0 flex-col xl:max-h-[calc(100vh-10rem)] xl:overflow-hidden"
+              aria-labelledby="list-heading"
+            >
               <h2
                 id="list-heading"
-                className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow"
+                className="mb-3 shrink-0 text-sm font-bold uppercase italic tracking-wide text-mp-yellow"
               >
-                Todos los torneos
+                Torneos
               </h2>
-              <ul className="grid list-none grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <ul className="list-none space-y-3 overflow-y-auto pr-1 xl:flex-1 xl:min-h-0">
                 {sortedList.map((t) => (
                   <li key={t._id} className="min-w-0">
                     <TournamentPickCard
