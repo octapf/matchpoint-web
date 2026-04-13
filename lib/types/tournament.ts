@@ -88,6 +88,8 @@ export interface MatchDoc {
   pointsB?: number;
   setsWonA?: number;
   setsWonB?: number;
+  /** Copied from tournament when present on match documents. */
+  setsPerMatch?: number;
   winnerId?: string;
   /** Per-set points when the API stores them. */
   setScores?: Array<{ pointsA: number; pointsB: number }>;
