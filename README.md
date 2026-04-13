@@ -51,7 +51,7 @@ flowchart LR
 ## Features (read-only)
 
 - **Home:** public tournament list with aggregate counts when the API returns them (teams, players, waitlist).
-- **Tournament detail:** tabs for **Summary**, **Teams** (`GET /api/teams`), **Matches**, and **Standings** (detail fetched with `includeMatches=1` & `includeStandings=1`). Private tournaments remain hidden without auth (API returns 404). Optional **background polling** (default every 30s while the tab is visible) refreshes matches and standings without WebSockets — configure `NEXT_PUBLIC_TOURNAMENT_POLL_MS` or set `0` to disable.
+- **Tournament detail:** tabs for **Summary**, **Teams** (`GET /api/teams`), **Matches**, and **Standings** (detail fetched with `includeMatches=1` & `includeStandings=1`). Private tournaments remain hidden without auth (API returns 404). Optional **background polling** (default every **15s** while the tab is visible) refreshes matches and standings without WebSockets — configure `NEXT_PUBLIC_TOURNAMENT_POLL_MS` or set `0` to disable.
 - **SEO:** dynamic page titles via `generateMetadata` (server fetch to the API).
 - **A11y:** skip link, focus styles, semantic landmarks.
 
@@ -85,7 +85,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_MATCHPOINT_API_URL` | Yes | Origin of the Matchpoint deployment **without** a trailing slash (e.g. `https://matchpoint.vercel.app`). |
-| `NEXT_PUBLIC_TOURNAMENT_POLL_MS` | No | On **tournament detail**, re-fetch interval in ms (clamped 5 000–120 000). Default **30 000** if unset. Set **`0`** to disable background refresh. |
+| `NEXT_PUBLIC_TOURNAMENT_POLL_MS` | No | On **tournament detail**, re-fetch interval in ms (clamped 5 000–120 000). Default **15 000** (15s) if unset. Set **`0`** to disable background refresh. |
 
 If Matchpoint uses **`CORS_ALLOWED_ORIGINS`**, add this site’s origin (e.g. `https://matchpoint.miralab.ar` or your Vercel preview URL).
 
