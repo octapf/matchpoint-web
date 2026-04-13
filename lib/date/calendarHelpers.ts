@@ -1,14 +1,22 @@
-/** Local date at midnight (avoid UTC shift from ISO strings). */
+/**
+ * Día civil local a partir de lo que manda la API.
+ * - `YYYY-MM-DD` (solo fecha) → ese día en horario local (sin interpretar UTC).
+ * - ISO con hora (`…T…Z`, etc.) → día local del instante (coherente con el resto del calendario).
+ */
 export function parseLocalDay(iso: string): Date {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso.trim());
-  if (m) {
-    const y = Number(m[1]);
-    const mo = Number(m[2]) - 1;
-    const d = Number(m[3]);
+  const s = iso.trim();
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (dateOnly) {
+    const y = Number(dateOnly[1]);
+    const mo = Number(dateOnly[2]) - 1;
+    const d = Number(dateOnly[3]);
     return new Date(y, mo, d);
   }
-  const t = new Date(iso);
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  const t = new Date(s);
+  if (Number.isNaN(t.getTime())) {
+    return new Date(NaN);
+  }
+  return stripTime(t);
 }
 
 export function stripTime(d: Date): Date {
@@ -23,41 +31,21 @@ export function sameDay(a: Date, b: Date): boolean {
   );
 }
 
-/** Inclusive: day is between start and end (date-only). */
+/** Inclusive: `day` (día civil local) está entre inicio y fin del torneo. */
 export function dayInTournamentRange(day: Date, startIso: string, endIso: string): boolean {
+  const start = stripTime(parseLocalDay(startIso));
+  const endSrc = endIso?.trim() ? parseLocalDay(endIso) : start;
+  const end = stripTime(endSrc);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+  let s = start.getTime();
+  let e = end.getTime();
+  if (s > e) [s, e] = [e, s];
   const d = stripTime(day).getTime();
-  const s = stripTime(parseLocalDay(startIso)).getTime();
-  const e = stripTime(parseLocalDay(endIso)).getTime();
   return d >= s && d <= e;
-}
-
-/**
- * Un solo día por torneo y por mes vista: primer día del tramo [inicio, fin] que cae en ese mes.
- * Evita repetir el nombre en todos los días de un torneo largo (p. ej. mes de duración).
- */
-export function isCalendarMarkDay(
-  day: Date,
-  startIso: string,
-  endIso: string,
-  visibleMonth: Date,
-): boolean {
-  const monthStart = stripTime(startOfMonth(visibleMonth));
-  const monthEnd = stripTime(endOfMonth(visibleMonth));
-  const rangeStart = stripTime(parseLocalDay(startIso));
-  const rangeEnd = stripTime(parseLocalDay(endIso));
-  const overlapStart =
-    rangeStart.getTime() > monthStart.getTime() ? rangeStart : monthStart;
-  const overlapEnd = rangeEnd.getTime() < monthEnd.getTime() ? rangeEnd : monthEnd;
-  if (overlapStart.getTime() > overlapEnd.getTime()) return false;
-  return sameDay(stripTime(day), overlapStart);
 }
 
 export function startOfMonth(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), 1);
-}
-
-export function endOfMonth(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth() + 1, 0);
 }
 
 /** Monday-first week: 0 = Monday, … 6 = Sunday */
@@ -87,3 +75,4 @@ export function getMonthGrid(visibleMonth: Date): { date: Date; inCurrentMonth: 
   }
   return cells;
 }
+

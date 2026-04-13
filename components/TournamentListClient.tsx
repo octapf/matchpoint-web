@@ -80,7 +80,7 @@ export function TournamentListClient() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-mp-bg">
+    <div className="flex min-h-0 flex-col bg-mp-bg max-lg:min-h-screen lg:h-svh lg:overflow-hidden">
       <SiteHeader
         variant="list"
         onRefresh={configured ? handleRefresh : undefined}
@@ -89,7 +89,7 @@ export function TournamentListClient() {
 
       <main
         id="main-content"
-        className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8 xl:max-w-[100rem]"
+        className="mx-auto flex w-full max-w-6xl flex-1 min-h-0 flex-col overflow-hidden px-4 py-5 sm:px-6 lg:max-w-[100rem] lg:px-8 lg:py-3"
         tabIndex={-1}
       >
         {!configured && (
@@ -144,47 +144,64 @@ export function TournamentListClient() {
         )}
 
         {sortedList.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 xl:items-start xl:gap-4">
-            <div className="min-w-0 xl:min-h-0">
-              <TournamentsCalendar
-                tournaments={sortedList}
-                visibleMonth={visibleMonth}
-                onPrevMonth={onPrevMonth}
-                onNextMonth={onNextMonth}
-                selectedId={selectedId}
-                onSelectTournament={selectTournament}
-              />
-            </div>
-
-            <div className="min-w-0 xl:min-h-0">
-              <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
+          <div className="flex min-h-0 flex-1 flex-col lg:min-h-0">
+            <div className="mb-2 hidden shrink-0 gap-4 lg:grid lg:grid-cols-[2fr_1fr_1fr]">
+              <h2
+                id="cal-heading"
+                className="text-sm font-bold uppercase italic tracking-wide text-mp-yellow"
+              >
+                Calendario
+              </h2>
+              <h2 className="text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
                 Detalle del torneo
               </h2>
-              <HomeTournamentDetail tournament={selectedTournament} />
-            </div>
-
-            <section
-              className="flex min-h-0 min-w-0 flex-col xl:max-h-[calc(100vh-10rem)] xl:overflow-hidden"
-              aria-labelledby="list-heading"
-            >
-              <h2
-                id="list-heading"
-                className="mb-3 shrink-0 text-sm font-bold uppercase italic tracking-wide text-mp-yellow"
-              >
+              <h2 className="text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
                 Torneos
               </h2>
-              <ul className="list-none space-y-3 overflow-y-auto pr-1 xl:flex-1 xl:min-h-0">
-                {sortedList.map((t) => (
-                  <li key={t._id} className="min-w-0">
-                    <TournamentPickCard
-                      t={t}
-                      selected={t._id === selectedId}
-                      onSelect={selectTournament}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </section>
+            </div>
+
+            <div className="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr_1fr] lg:min-h-0 lg:flex-1 lg:items-stretch lg:gap-3 lg:overflow-hidden">
+              <div className="relative z-0 flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0 lg:overflow-hidden">
+                <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow lg:hidden">
+                  Calendario
+                </h2>
+                <TournamentsCalendar
+                  tournaments={sortedList}
+                  visibleMonth={visibleMonth}
+                  onPrevMonth={onPrevMonth}
+                  onNextMonth={onNextMonth}
+                  selectedId={selectedId}
+                  onSelectTournament={selectTournament}
+                />
+              </div>
+
+              <div className="flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0 lg:overflow-hidden">
+                <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow lg:hidden">
+                  Detalle del torneo
+                </h2>
+                <HomeTournamentDetail tournament={selectedTournament} />
+              </div>
+
+              <section
+                className="flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0 lg:overflow-hidden"
+                aria-label="Torneos"
+              >
+                <h2 className="mb-3 shrink-0 text-sm font-bold uppercase italic tracking-wide text-mp-yellow lg:hidden">
+                  Torneos
+                </h2>
+                <ul className="mp-scrollbar list-none space-y-3 overflow-y-auto pr-1 lg:flex-1 lg:min-h-0 lg:space-y-2">
+                  {sortedList.map((t) => (
+                    <li key={t._id} className="min-w-0">
+                      <TournamentPickCard
+                        t={t}
+                        selected={t._id === selectedId}
+                        onSelect={selectTournament}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
           </div>
         )}
       </main>

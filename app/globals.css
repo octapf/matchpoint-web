@@ -15,6 +15,11 @@
   --mp-tab-active: #fbbf24;
 }
 
+/* Slightly smaller UI than browser default 16px (scales all rem-based Tailwind type) */
+html {
+  font-size: 0.875rem;
+}
+
 @theme inline {
   --color-mp-bg: var(--mp-bg);
   --color-mp-surface: var(--mp-surface);
@@ -34,4 +39,28 @@ body {
   background: var(--mp-bg);
   color: var(--mp-text);
   font-family: var(--font-sans);
+}
+
+/* Dark-theme scrollbars (Firefox + WebKit) */
+.mp-scrollbar {
+  scrollbar-color: var(--mp-surface-light) var(--mp-bg);
+  scrollbar-width: thin;
+}
+
+.mp-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mp-scrollbar::-webkit-scrollbar-track {
+  background: var(--mp-bg);
+  border-radius: 4px;
+}
+
+.mp-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--mp-surface-light);
+  border-radius: 4px;
+}
+
+.mp-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--mp-text-muted);
 }

@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import type { TournamentListItem } from "@/lib/types/tournament";
 import {
+  dayInTournamentRange,
   getMonthGrid,
-  isCalendarMarkDay,
   sameDay,
 } from "@/lib/date/calendarHelpers";
 
@@ -24,6 +24,8 @@ const MONTHS = [
   "Noviembre",
   "Diciembre",
 ];
+
+const CAL_ROWS = 6;
 
 type TournamentsCalendarProps = {
   tournaments: TournamentListItem[];
@@ -48,43 +50,41 @@ export function TournamentsCalendar({
     const map = new Map<string, TournamentListItem[]>();
     for (const cell of grid) {
       const key = `${cell.date.getTime()}`;
-      const list = tournaments.filter((t) =>
-        isCalendarMarkDay(cell.date, t.startDate, t.endDate, visibleMonth),
-      );
+      const list = tournaments
+        .filter((t) => dayInTournamentRange(cell.date, t.startDate, t.endDate))
+        .sort((a, b) => {
+          const c = String(a.startDate).localeCompare(String(b.startDate));
+          return c !== 0 ? c : a.name.localeCompare(b.name);
+        });
       if (list.length) map.set(key, list);
     }
     return map;
-  }, [grid, tournaments, visibleMonth]);
+  }, [grid, tournaments]);
 
-  const label = `${MONTHS[visibleMonth.getMonth()]} ${visibleMonth.getFullYear()}`;
+  const monthLabel = `${MONTHS[visibleMonth.getMonth()]} ${visibleMonth.getFullYear()}`;
 
   return (
     <section
-      className="rounded-2xl border border-mp-violet/35 bg-mp-violet/5 p-3 sm:p-4"
-      aria-labelledby="cal-heading"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-mp-violet/35 bg-mp-violet/5 p-2 sm:p-3 lg:h-full lg:min-h-0 lg:p-2.5"
+      aria-label="Calendario"
     >
-      <p className="mb-2 text-[11px] leading-snug text-mp-text-muted">
-        Cada torneo se marca una vez por mes: el primer día del evento en ese mes (el rango completo está
-        en el detalle).
-      </p>
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 id="cal-heading" className="text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
-          Calendario
-        </h2>
-        <div className="flex items-center gap-1">
+      <div className="mb-2 flex min-w-0 shrink-0 items-center justify-end">
+        <div className="flex min-w-0 max-w-full items-center gap-1">
           <button
             type="button"
             onClick={onPrevMonth}
-            className="rounded-lg border border-mp-surface-light bg-mp-surface px-2 py-1.5 text-sm text-mp-text hover:bg-mp-surface-light focus-visible:outline focus-visible:ring-2 focus-visible:ring-mp-yellow"
+            className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg border border-mp-surface-light bg-mp-surface px-1.5 text-base leading-none text-mp-text hover:bg-mp-surface-light focus-visible:outline focus-visible:ring-2 focus-visible:ring-mp-yellow lg:h-7 lg:min-w-7 lg:text-sm"
             aria-label="Mes anterior"
           >
             ‹
           </button>
-          <span className="min-w-[10rem] text-center text-sm font-semibold text-mp-text">{label}</span>
+          <span className="min-w-0 flex-1 text-center text-xs font-semibold tabular-nums text-mp-text sm:min-w-[9rem] sm:text-sm sm:flex-none">
+            {monthLabel}
+          </span>
           <button
             type="button"
             onClick={onNextMonth}
-            className="rounded-lg border border-mp-surface-light bg-mp-surface px-2 py-1.5 text-sm text-mp-text hover:bg-mp-surface-light focus-visible:outline focus-visible:ring-2 focus-visible:ring-mp-yellow"
+            className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg border border-mp-surface-light bg-mp-surface px-1.5 text-base leading-none text-mp-text hover:bg-mp-surface-light focus-visible:outline focus-visible:ring-2 focus-visible:ring-mp-yellow lg:h-7 lg:min-w-7 lg:text-sm"
             aria-label="Mes siguiente"
           >
             ›
@@ -92,15 +92,20 @@ export function TournamentsCalendar({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 text-center text-[10px] font-semibold uppercase text-mp-text-muted sm:text-xs">
+      <div className="grid shrink-0 grid-cols-7 gap-0.5 text-center text-[9px] font-semibold uppercase text-mp-text-muted sm:text-[10px] lg:text-[9px]">
         {WEEKDAYS.map((w) => (
-          <div key={w} className="py-1">
+          <div key={w} className="py-0.5">
             {w}
           </div>
         ))}
       </div>
 
-      <div className="mt-1 grid grid-cols-7 gap-0.5 sm:gap-1">
+      <div
+        className="mt-0.5 grid min-h-0 flex-1 grid-cols-7 gap-0.5 sm:gap-0.5 lg:min-h-0 [&>*]:min-h-0"
+        style={{
+          gridTemplateRows: `repeat(${CAL_ROWS}, minmax(0, 1fr))`,
+        }}
+      >
         {grid.map((cell, idx) => {
           const key = `${cell.date.getTime()}`;
           const dayTournaments = tournamentsByDay.get(key) ?? [];
@@ -109,21 +114,21 @@ export function TournamentsCalendar({
           return (
             <div
               key={idx}
-              className={`min-h-[72px] rounded-lg border p-1 text-left sm:min-h-[88px] sm:p-1.5 ${
+              className={`flex min-h-0 flex-col overflow-hidden rounded-md border p-0.5 text-left sm:p-1 lg:rounded-lg ${
                 cell.inCurrentMonth
                   ? "border-mp-surface-light bg-mp-bg/50"
                   : "border-transparent bg-mp-bg/20 opacity-50"
               } ${isToday ? "ring-1 ring-mp-yellow/60" : ""}`}
             >
               <div
-                className={`text-[11px] font-bold tabular-nums sm:text-xs ${
+                className={`shrink-0 text-[10px] font-bold tabular-nums leading-none sm:text-[11px] lg:text-[10px] ${
                   cell.inCurrentMonth ? "text-mp-text" : "text-mp-text-muted"
                 }`}
               >
                 {cell.date.getDate()}
               </div>
-              <div className="mt-0.5 flex flex-col gap-0.5">
-                {dayTournaments.slice(0, 3).map((t, ti) => {
+              <div className="mp-scrollbar mt-0.5 flex min-h-0 flex-1 flex-col gap-px overflow-y-auto overflow-x-hidden">
+                {dayTournaments.map((t, ti) => {
                   const sel = t._id === selectedId;
                   return (
                     <button
@@ -131,19 +136,16 @@ export function TournamentsCalendar({
                       type="button"
                       title={t.name}
                       onClick={() => onSelectTournament(t._id)}
-                      className={`w-full truncate rounded px-0.5 py-0.5 text-left text-[9px] font-medium leading-tight sm:text-[10px] ${
+                      className={`min-h-0 w-full shrink-0 truncate rounded px-0.5 py-px text-left text-[8px] font-medium leading-tight sm:text-[9px] lg:text-[8px] ${
                         ti % 2 === 0
                           ? "bg-mp-yellow/20 text-mp-yellow"
                           : "bg-mp-violet/25 text-mp-violet"
                       } ${sel ? "ring-1 ring-white" : ""}`}
                     >
-                      {t.name.length > 18 ? `${t.name.slice(0, 16)}…` : t.name}
+                      {t.name.length > 14 ? `${t.name.slice(0, 12)}…` : t.name}
                     </button>
                   );
                 })}
-                {dayTournaments.length > 3 ? (
-                  <span className="text-[9px] text-mp-text-muted">+{dayTournaments.length - 3}</span>
-                ) : null}
               </div>
             </div>
           );

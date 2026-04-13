@@ -6,6 +6,7 @@ export {
   IoArrowBack as IconArrowBack,
   IoChevronBack as IconChevronBack,
   IoChevronForward as IconChevronForward,
+  IoDocumentTextOutline as IconDocumentTextOutline,
   IoPeople as IconPeople,
   IoRefresh as IconRefresh,
   IoTrophy as IconTrophy,
