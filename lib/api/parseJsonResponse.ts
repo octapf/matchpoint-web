@@ -13,7 +13,7 @@ export async function parseJsonResponse<T>(res: Response): Promise<T> {
   } catch {
     if (!res.ok) {
       throw new Error(
-        `API ${res.status}: la respuesta no es JSON. Comprobá que NEXT_PUBLIC_MATCHPOINT_API_URL sea el origen del backend Matchpoint (p. ej. https://matchpoint.miralab.ar), no la URL de este sitio.`,
+        `API ${res.status}: la respuesta no es JSON. NEXT_PUBLIC_MATCHPOINT_API_URL debe ser el origen del backend API (repo matchpoint en Vercel, p. ej. https://matchpoint.vercel.app), no la URL de este sitio web (matchpoint-web).`,
       );
     }
     throw new Error("Invalid JSON from server");
