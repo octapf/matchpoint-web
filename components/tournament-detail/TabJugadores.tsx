@@ -4,11 +4,7 @@ import { useMemo, useState } from "react";
 import type { Entry } from "@/lib/types/entry";
 import type { Team } from "@/lib/types/team";
 import { TabFilterBar } from "@/components/tournament-detail/TabFilterBar";
-
-function shortId(id: string) {
-  if (id.length <= 10) return id;
-  return `${id.slice(0, 6)}…${id.slice(-4)}`;
-}
+import { shortId } from "@/lib/format/shortId";
 
 export function TabJugadores({
   entries,

@@ -1,13 +1,20 @@
 import type { TournamentDetail } from "@/lib/types/tournament";
+import type { WaitlistByDivision } from "@/lib/types/waitlist";
+import { WaitlistDetailSection } from "@/components/tournament-detail/WaitlistDetailSection";
 import { categoryLabel } from "@/lib/format/category";
 import { divisionLabel } from "@/lib/format/division";
 
 type TabResumenProps = {
   tournament: TournamentDetail;
   formatRange: (start: string, end: string) => string;
+  waitlistByDivision: WaitlistByDivision;
 };
 
-export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
+export function TabResumen({
+  tournament: t,
+  formatRange,
+  waitlistByDivision,
+}: TabResumenProps) {
   const snap = t.categoriesSnapshot;
 
   return (
@@ -36,9 +43,21 @@ export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
           <dt className="text-mp-text-muted">Jugadores</dt>
           <dd className="font-medium text-mp-text">{t.entriesCount ?? "—"}</dd>
         </div>
-        <div className="flex justify-between gap-4 border-b border-mp-surface-light pb-2">
-          <dt className="text-mp-text-muted">Lista de espera</dt>
-          <dd className="font-medium text-mp-text">{t.waitlistCount ?? 0}</dd>
+        <div className="border-b border-mp-surface-light pb-2">
+          <div className="flex justify-between gap-4">
+            <dt className="text-mp-text-muted">Lista de espera</dt>
+            <dd className="font-medium text-mp-text">{t.waitlistCount ?? 0}</dd>
+          </div>
+          {t.waitlistCountByDivision ? (
+            <p className="mt-2 text-xs text-mp-text-secondary">
+              Por división:{" "}
+              <span className="text-mp-text-muted">
+                {divisionLabel("men")} {t.waitlistCountByDivision.men ?? 0} ·{" "}
+                {divisionLabel("women")} {t.waitlistCountByDivision.women ?? 0} ·{" "}
+                {divisionLabel("mixed")} {t.waitlistCountByDivision.mixed ?? 0}
+              </span>
+            </p>
+          ) : null}
         </div>
         <div className="flex justify-between gap-4 border-b border-mp-surface-light pb-2">
           <dt className="text-mp-text-muted">Cupo máx. equipos</dt>
@@ -93,6 +112,11 @@ export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
           </ul>
         </section>
       ) : null}
+
+      <WaitlistDetailSection
+        totalCount={t.waitlistCount ?? 0}
+        waitlistByDivision={waitlistByDivision}
+      />
 
       <p className="text-xs text-mp-text-muted">
         Inscripciones y gestión de torneos en la app Matchpoint.

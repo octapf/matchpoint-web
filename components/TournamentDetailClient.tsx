@@ -93,6 +93,11 @@ export function TournamentDetailClient({ id }: { id: string }) {
   const tournament = page?.tournament;
   const teams = page?.teams ?? [];
   const entries = page?.entries ?? [];
+  const waitlistByDivision = page?.waitlistByDivision ?? {
+    men: [],
+    women: [],
+    mixed: [],
+  };
 
   const hasMatches = useMemo(
     () => (tournament?.matches?.length ?? 0) > 0,
@@ -106,7 +111,13 @@ export function TournamentDetailClient({ id }: { id: string }) {
   const renderTab = (tab: DetailTabId) => {
     if (!tournament) return null;
     if (tab === "resumen") {
-      return <TabResumen tournament={tournament} formatRange={formatRange} />;
+      return (
+        <TabResumen
+          tournament={tournament}
+          formatRange={formatRange}
+          waitlistByDivision={waitlistByDivision}
+        />
+      );
     }
     if (tab === "equipos") {
       return (

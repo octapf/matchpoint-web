@@ -2,17 +2,26 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchTournamentDetail, fetchTournamentsList } from "@/lib/api/tournaments";
 import { fetchEntriesForTournament } from "@/lib/api/entries";
 import { fetchTeamsForTournament } from "@/lib/api/teams";
+import { fetchWaitlistForTournament } from "@/lib/api/waitlist";
 import type { Entry } from "@/lib/types/entry";
 import type { Team } from "@/lib/types/team";
 import type { TournamentDetail, TournamentListItem } from "@/lib/types/tournament";
+import type { WaitlistByDivision } from "@/lib/types/waitlist";
+
+const EMPTY_WAITLIST = (): WaitlistByDivision => ({
+  men: [],
+  women: [],
+  mixed: [],
+});
 
 async function fetchTournamentPageData(id: string) {
-  const [tournament, teams, entries] = await Promise.all([
+  const [tournament, teams, entries, waitlistByDivision] = await Promise.all([
     fetchTournamentDetail(id),
     fetchTeamsForTournament(id),
     fetchEntriesForTournament(id).catch((): Entry[] => []),
+    fetchWaitlistForTournament(id).catch((): WaitlistByDivision => EMPTY_WAITLIST()),
   ]);
-  return { tournament, teams, entries };
+  return { tournament, teams, entries, waitlistByDivision };
 }
 
 export const loadTournaments = createAsyncThunk(
@@ -56,8 +65,13 @@ type TournamentsState = {
   list: TournamentListItem[];
   listStatus: "idle" | "loading" | "succeeded" | "failed";
   listError: string | null;
-  /** Detail + teams + entries for current route. */
-  page: { tournament: TournamentDetail; teams: Team[]; entries: Entry[] } | null;
+  /** Detail + teams + entries + waitlist rows for current route. */
+  page: {
+    tournament: TournamentDetail;
+    teams: Team[];
+    entries: Entry[];
+    waitlistByDivision: WaitlistByDivision;
+  } | null;
   detailStatus: "idle" | "loading" | "succeeded" | "failed";
   detailError: string | null;
 };
