@@ -35,7 +35,7 @@ export function TournamentCard({ t }: { t: TournamentListItem }) {
   if (typeof wait === "number" && wait > 0) metaBits.push(`${wait} en lista de espera`);
 
   return (
-    <article className="relative mb-3 overflow-hidden rounded-xl border border-mp-surface-light bg-mp-surface">
+    <article className="relative h-full overflow-hidden rounded-xl border border-mp-surface-light bg-mp-surface">
       <Link
         href={`/tournaments/${t._id}`}
         className="block p-4 no-underline outline-none transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-mp-yellow focus-visible:ring-offset-2 focus-visible:ring-offset-mp-bg"

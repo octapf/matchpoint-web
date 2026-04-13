@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { isApiConfigured } from "@/lib/config";
 import {
   clearTournamentPage,
@@ -35,7 +36,6 @@ function formatRange(start: string, end: string) {
 }
 
 export function TournamentDetailClient({ id }: { id: string }) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { page, detailStatus, detailError } = useAppSelector((s) => s.tournaments);
   const configured = isApiConfigured();
@@ -78,25 +78,19 @@ export function TournamentDetailClient({ id }: { id: string }) {
     );
   };
 
-  return (
-    <div className="flex min-h-0 flex-1 flex-col bg-mp-bg">
-      <header className="sticky top-0 z-10 bg-mp-bg px-2 pt-[max(0.5rem,env(safe-area-inset-top))]">
-        <div className="relative flex min-h-[50px] items-center justify-center px-2">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="absolute left-2 top-1/2 z-[1] -translate-y-1/2 rounded-md px-2 py-2 text-sm text-mp-text-secondary outline-none hover:text-mp-text focus-visible:ring-2 focus-visible:ring-mp-yellow"
-            aria-label="Volver al listado"
-          >
-            ← Volver
-          </button>
-          <h1 className="line-clamp-2 max-w-[min(100%,280px)] px-12 text-center text-[13px] font-semibold italic tracking-wide text-white">
-            {tournament?.name ?? "Torneo"}
-          </h1>
-        </div>
-      </header>
+  const headerTitle =
+    tournament?.name ??
+    (detailStatus === "loading" ? "Cargando…" : "Torneo");
 
-      <main id="main-content" className="flex flex-1 flex-col px-4 pb-16" tabIndex={-1}>
+  return (
+    <div className="flex min-h-screen flex-col bg-mp-bg">
+      <SiteHeader variant="detail" title={headerTitle} />
+
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8"
+        tabIndex={-1}
+      >
         {!configured && (
           <p className="text-mp-text-muted" role="status">
             Configurá la URL de la API en{" "}
@@ -127,9 +121,13 @@ export function TournamentDetailClient({ id }: { id: string }) {
         )}
 
         {tournament && detailStatus === "succeeded" && (
-          <article className="rounded-2xl border border-mp-surface-light bg-mp-surface p-5">
-            <p className="text-xs text-mp-text-muted">{formatRange(tournament.startDate, tournament.endDate)}</p>
-            <p className="mt-1 text-sm text-mp-text-secondary">{tournament.location}</p>
+          <article className="rounded-2xl border border-mp-surface-light bg-mp-surface p-5 sm:p-8">
+            <p className="text-sm text-mp-text-muted">
+              {formatRange(tournament.startDate, tournament.endDate)}
+            </p>
+            <p className="mt-1 text-base text-mp-text-secondary">
+              {tournament.location}
+            </p>
 
             <DetailTabs hasMatches={hasMatches} hasStandings={hasStandings}>
               {(active) => renderTab(active)}
@@ -137,6 +135,8 @@ export function TournamentDetailClient({ id }: { id: string }) {
           </article>
         )}
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

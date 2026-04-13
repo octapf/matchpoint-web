@@ -40,7 +40,7 @@ export function DetailTabs({
       <div
         role="tablist"
         aria-label="Secciones del torneo"
-        className="flex flex-wrap gap-1 rounded-lg border border-mp-violet/45 bg-mp-violet/10 p-1"
+        className="flex flex-wrap gap-1 rounded-lg border border-mp-violet/45 bg-mp-violet/10 p-1 sm:gap-2 sm:p-1.5"
       >
         {visible.map((tab) => {
           const selected = tab.id === effectiveActive;
@@ -55,7 +55,7 @@ export function DetailTabs({
               aria-selected={selected}
               aria-controls={panelId}
               tabIndex={selected ? 0 : -1}
-              className={`min-h-[44px] flex-1 rounded-md px-3 py-2 text-center text-xs font-semibold uppercase italic tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mp-yellow ${
+              className={`min-h-[44px] flex-1 rounded-md px-3 py-2 text-center text-xs font-semibold uppercase italic tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mp-yellow sm:min-h-0 sm:flex-none sm:px-4 sm:text-sm ${
                 selected
                   ? "bg-mp-violet text-white"
                   : "text-mp-text-secondary hover:bg-mp-surface-light/80 hover:text-mp-text"
