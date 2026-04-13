@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Matchpoint-aligned dark theme (see mobile `constants/Colors.ts`) */
+:root {
+  --mp-bg: #1a1a1a;
+  --mp-surface: #2d2d2d;
+  --mp-surface-light: #3d3d3d;
+  --mp-text: #e5e5e5;
+  --mp-text-secondary: #a3a3a3;
+  --mp-text-muted: #737373;
+  --mp-yellow: #fbbf24;
+  --mp-violet: #8b5cf6;
+  --mp-error: #ef4444;
+  --mp-tab-inactive: #737373;
+  --mp-tab-active: #fbbf24;
+}
+
+@theme inline {
+  --color-mp-bg: var(--mp-bg);
+  --color-mp-surface: var(--mp-surface);
+  --color-mp-surface-light: var(--mp-surface-light);
+  --color-mp-text: var(--mp-text);
+  --color-mp-text-secondary: var(--mp-text-secondary);
+  --color-mp-text-muted: var(--mp-text-muted);
+  --color-mp-yellow: var(--mp-yellow);
+  --color-mp-violet: var(--mp-violet);
+  --color-mp-error: var(--mp-error);
+  --color-mp-tab-inactive: var(--mp-tab-inactive);
+  --color-mp-tab-active: var(--mp-tab-active);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--mp-bg);
+  color: var(--mp-text);
+  font-family: var(--font-sans);
+}
