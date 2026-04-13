@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
 import { TournamentDetailClient } from "@/components/TournamentDetailClient";
+import { getApiBaseUrl } from "@/lib/config";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-function apiBase(): string | null {
-  const raw = process.env.NEXT_PUBLIC_MATCHPOINT_API_URL?.trim();
-  if (!raw) return null;
-  return raw.replace(/\/$/, "");
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const base = apiBase();
+  const base = getApiBaseUrl();
   if (!base || !id) {
     return { title: "Torneo | Matchpoint" };
   }

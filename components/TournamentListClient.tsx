@@ -38,12 +38,15 @@ export function TournamentListClient() {
               API no configurada
             </p>
             <p className="mt-2 text-sm leading-relaxed text-mp-text-muted">
-              Definí{" "}
+              En Vercel o <code className="text-xs">.env.local</code>, la variable{" "}
               <code className="rounded bg-mp-surface-light px-1.5 py-0.5 text-xs text-mp-yellow">
                 NEXT_PUBLIC_MATCHPOINT_API_URL
               </code>{" "}
-              en <code className="text-xs">.env.local</code> apuntando al
-              despliegue de Matchpoint.
+              debe tener como <strong className="text-mp-text">valor</strong> la URL
+              completa del backend, p. ej.{" "}
+              <code className="text-xs text-mp-yellow">https://matchpoint.miralab.ar</code>{" "}
+              (con <code className="text-xs">https://</code>). No pongas el nombre de la
+              variable como valor.
             </p>
           </div>
         )}
