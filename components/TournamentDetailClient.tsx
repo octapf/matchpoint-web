@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -77,6 +77,19 @@ export function TournamentDetailClient({ id }: { id: string }) {
     };
   }, [configured, detailStatus, dispatch, id, pollMs]);
 
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = useCallback(async () => {
+    if (!configured) return;
+    setRefreshing(true);
+    try {
+      await dispatch(refreshTournamentPage(id)).unwrap();
+    } catch {
+      /* keep last good payload */
+    } finally {
+      setRefreshing(false);
+    }
+  }, [configured, dispatch, id]);
+
   const tournament = page?.tournament;
   const teams = page?.teams ?? [];
   const entries = page?.entries ?? [];
@@ -105,7 +118,11 @@ export function TournamentDetailClient({ id }: { id: string }) {
     }
     if (tab === "partidos") {
       return (
-        <TabPartidos matches={tournament.matches ?? []} teams={teams} />
+        <TabPartidos
+          tournamentId={tournament._id}
+          matches={tournament.matches ?? []}
+          teams={teams}
+        />
       );
     }
     if (tab === "clasificacion") {
@@ -120,7 +137,12 @@ export function TournamentDetailClient({ id }: { id: string }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-mp-bg">
-      <SiteHeader variant="detail" title={headerTitle} />
+      <SiteHeader
+        variant="detail"
+        title={headerTitle}
+        onRefresh={configured && detailStatus === "succeeded" ? handleRefresh : undefined}
+        refreshPending={refreshing}
+      />
 
       <main
         id="main-content"

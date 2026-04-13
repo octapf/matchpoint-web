@@ -25,7 +25,7 @@ export function isApiConfigured(): boolean {
 /**
  * Interval (ms) to re-fetch tournament detail while the detail page is open.
  * Set `NEXT_PUBLIC_TOURNAMENT_POLL_MS` — e.g. `15000` for 15s. `0` disables polling.
- * Default: 15000 when unset (read-only “near live” updates without backend WebSockets).
+ * Default: 15000 when unset (near-live refresh without WebSockets).
  */
 export function getTournamentPollIntervalMs(): number {
   const raw = process.env.NEXT_PUBLIC_TOURNAMENT_POLL_MS?.trim();

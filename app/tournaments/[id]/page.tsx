@@ -24,7 +24,7 @@ export async function generateMetadata({
     const name = typeof data.name === "string" ? data.name : "Torneo";
     return {
       title: `${name} | Matchpoint`,
-      description: "Información pública del torneo (solo lectura).",
+      description: "Equipos, partidos y clasificación del torneo.",
     };
   } catch {
     return { title: "Torneo | Matchpoint" };

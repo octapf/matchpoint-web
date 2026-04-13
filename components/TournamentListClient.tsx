@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { TournamentCard } from "@/components/TournamentCard";
@@ -18,9 +18,26 @@ export function TournamentListClient() {
     void dispatch(loadTournaments(undefined));
   }, [dispatch, configured]);
 
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = useCallback(async () => {
+    if (!configured) return;
+    setRefreshing(true);
+    try {
+      await dispatch(loadTournaments(undefined)).unwrap();
+    } catch {
+      /* listError surfaces below */
+    } finally {
+      setRefreshing(false);
+    }
+  }, [configured, dispatch]);
+
   return (
     <div className="flex min-h-screen flex-col bg-mp-bg">
-      <SiteHeader variant="list" />
+      <SiteHeader
+        variant="list"
+        onRefresh={configured ? handleRefresh : undefined}
+        refreshPending={refreshing}
+      />
 
       <main
         id="main-content"

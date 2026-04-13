@@ -1,6 +1,6 @@
 # Matchpoint Web
 
-**Read-only web companion** for [Matchpoint](https://github.com/octapf/matchpoint): browse **public** beach volleyball tournaments, teams, matches, and standings in the browser. It consumes the **same** Matchpoint backend (Vercel serverless API + MongoDB Atlas)—**no database credentials in the client**; all data flows over HTTPS like the mobile app.
+Web companion for [Matchpoint](https://github.com/octapf/matchpoint): browse **public** beach volleyball tournaments, teams, matches, and standings in the browser. It consumes the **same** Matchpoint backend (Vercel serverless API + MongoDB Atlas)—**no database credentials in the client**; all data flows over HTTPS like the mobile app.
 
 **By [Miralab](https://miralab.ar)**
 
@@ -17,7 +17,7 @@
 
 ## Problem and approach
 
-The Matchpoint **Android** app is where organizers and players manage tournaments. This repo adds a **portfolio-grade web front** that showcases the same domain and API with a deliberately **read-only** surface: no sign-in, no writes—only GETs against existing public endpoints. That keeps scope small while demonstrating **Next.js**, **TypeScript**, **Tailwind**, **Redux**, **Jest**, and **accessible, responsive UI** aligned with the app’s dark theme (yellow / violet).
+The Matchpoint app is where organizers and players manage tournaments. This repo adds a **web front** for the same domain and API: public tournament data via existing endpoints (no sign-in on the web). The stack highlights **Next.js**, **TypeScript**, **Tailwind**, **Redux**, **Jest**, and **accessible, responsive UI** aligned with the app’s dark theme (yellow / violet).
 
 ---
 
@@ -48,10 +48,10 @@ flowchart LR
 
 ---
 
-## Features (read-only)
+## Features
 
-- **Home:** public tournament list with aggregate counts when the API returns them (teams, players, waitlist).
-- **Tournament detail:** tabs for **Summary**, **Teams** (`GET /api/teams`), **Matches**, and **Standings** (detail fetched with `includeMatches=1` & `includeStandings=1`). Private tournaments remain hidden without auth (API returns 404). Optional **background polling** (default every **15s** while the tab is visible) refreshes matches and standings without WebSockets — configure `NEXT_PUBLIC_TOURNAMENT_POLL_MS` or set `0` to disable.
+- **Home:** public tournament list with aggregate counts when the API returns them (teams, players, waitlist). Manual **refresh** in the header reloads the list.
+- **Tournament detail:** tabs for **Summary**, **Teams** (`GET /api/teams`), **Players**, **Matches**, and **Standings** (detail fetched with `includeMatches=1` & `includeStandings=1`). Each match links to a **match detail** page. Private tournaments remain hidden without auth (API returns 404). Optional **background polling** (default every **15s** while the tab is visible) plus a header **refresh** button. Configure `NEXT_PUBLIC_TOURNAMENT_POLL_MS` or set `0` to disable polling.
 - **SEO:** dynamic page titles via `generateMetadata` (server fetch to the API).
 - **A11y:** skip link, focus styles, semantic landmarks.
 

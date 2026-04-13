@@ -15,7 +15,11 @@ export const metadata: Metadata = {
     template: "%s | Matchpoint",
   },
   description:
-    "Vista web solo lectura de torneos públicos. Datos desde la API de Matchpoint.",
+    "Torneos públicos de beach vóley: listado, equipos, partidos y clasificación. Datos desde la API de Matchpoint.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/matchpoint-app-icon.png",
+  },
 };
 
 export default function RootLayout({

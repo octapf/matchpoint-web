@@ -1,4 +1,4 @@
-/** Subset of Matchpoint `Tournament` for read-only web. */
+/** Subset of Matchpoint `Tournament` for the web app. */
 export type TournamentStatus = "open" | "full" | "cancelled";
 
 export type TournamentPhase =
@@ -89,7 +89,10 @@ export interface MatchDoc {
   setsWonA?: number;
   setsWonB?: number;
   winnerId?: string;
+  /** Per-set points when the API stores them. */
+  setScores?: Array<{ pointsA: number; pointsB: number }>;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 /** Detail GET with `includeMatches` / `includeStandings`. */

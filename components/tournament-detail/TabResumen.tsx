@@ -95,7 +95,7 @@ export function TabResumen({ tournament: t, formatRange }: TabResumenProps) {
       ) : null}
 
       <p className="text-xs text-mp-text-muted">
-        Vista solo lectura. Inscripciones y gestión en la app Matchpoint.
+        Inscripciones y gestión de torneos en la app Matchpoint.
       </p>
     </div>
   );
