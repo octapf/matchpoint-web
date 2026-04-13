@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import type { TournamentListItem } from "@/lib/types/tournament";
 import {
-  dayInTournamentRange,
   getMonthGrid,
+  isCalendarMarkDay,
   sameDay,
 } from "@/lib/date/calendarHelpers";
 
@@ -49,12 +49,12 @@ export function TournamentsCalendar({
     for (const cell of grid) {
       const key = `${cell.date.getTime()}`;
       const list = tournaments.filter((t) =>
-        dayInTournamentRange(cell.date, t.startDate, t.endDate),
+        isCalendarMarkDay(cell.date, t.startDate, t.endDate, visibleMonth),
       );
       if (list.length) map.set(key, list);
     }
     return map;
-  }, [grid, tournaments]);
+  }, [grid, tournaments, visibleMonth]);
 
   const label = `${MONTHS[visibleMonth.getMonth()]} ${visibleMonth.getFullYear()}`;
 
@@ -63,6 +63,10 @@ export function TournamentsCalendar({
       className="rounded-2xl border border-mp-violet/35 bg-mp-violet/5 p-3 sm:p-4"
       aria-labelledby="cal-heading"
     >
+      <p className="mb-2 text-[11px] leading-snug text-mp-text-muted">
+        Cada torneo se marca una vez por mes: el primer día del evento en ese mes (el rango completo está
+        en el detalle).
+      </p>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 id="cal-heading" className="text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
           Calendario

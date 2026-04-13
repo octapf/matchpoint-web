@@ -31,6 +31,27 @@ export function dayInTournamentRange(day: Date, startIso: string, endIso: string
   return d >= s && d <= e;
 }
 
+/**
+ * Un solo día por torneo y por mes vista: primer día del tramo [inicio, fin] que cae en ese mes.
+ * Evita repetir el nombre en todos los días de un torneo largo (p. ej. mes de duración).
+ */
+export function isCalendarMarkDay(
+  day: Date,
+  startIso: string,
+  endIso: string,
+  visibleMonth: Date,
+): boolean {
+  const monthStart = stripTime(startOfMonth(visibleMonth));
+  const monthEnd = stripTime(endOfMonth(visibleMonth));
+  const rangeStart = stripTime(parseLocalDay(startIso));
+  const rangeEnd = stripTime(parseLocalDay(endIso));
+  const overlapStart =
+    rangeStart.getTime() > monthStart.getTime() ? rangeStart : monthStart;
+  const overlapEnd = rangeEnd.getTime() < monthEnd.getTime() ? rangeEnd : monthEnd;
+  if (overlapStart.getTime() > overlapEnd.getTime()) return false;
+  return sameDay(stripTime(day), overlapStart);
+}
+
 export function startOfMonth(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
