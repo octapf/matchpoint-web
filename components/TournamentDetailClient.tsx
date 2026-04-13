@@ -191,12 +191,6 @@ export function TournamentDetailClient({ id }: { id: string }) {
 
         {tournament && detailStatus === "succeeded" && (
           <article className="rounded-2xl border border-mp-surface-light bg-mp-surface p-5 sm:p-8">
-            {pollMs > 0 ? (
-              <p className="mb-4 text-xs text-mp-text-muted" role="status">
-                Actualización automática cada {Math.round(pollMs / 1000)} s con la página
-                visible (partidos y clasificación se refrescan desde la API).
-              </p>
-            ) : null}
             <p className="text-sm text-mp-text-muted">
               {formatRange(tournament.startDate, tournament.endDate)}
             </p>

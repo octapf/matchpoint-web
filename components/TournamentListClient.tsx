@@ -1,9 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { TournamentCard } from "@/components/TournamentCard";
+import { HomeTournamentDetail } from "@/components/home/HomeTournamentDetail";
+import { TournamentPickCard } from "@/components/home/TournamentPickCard";
+import { TournamentsCalendar } from "@/components/home/TournamentsCalendar";
+import { parseLocalDay } from "@/lib/date/calendarHelpers";
 import { isApiConfigured } from "@/lib/config";
 import { loadTournaments } from "@/store/features/tournamentsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -13,10 +16,47 @@ export function TournamentListClient() {
   const { list, listStatus, listError } = useAppSelector((s) => s.tournaments);
   const configured = isApiConfigured();
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), 1);
+  });
+
   useEffect(() => {
     if (!configured) return;
     void dispatch(loadTournaments(undefined));
   }, [dispatch, configured]);
+
+  const sortedList = useMemo(() => {
+    return [...list].sort((a, b) => String(a.startDate).localeCompare(String(b.startDate)));
+  }, [list]);
+
+  useEffect(() => {
+    if (sortedList.length === 0) {
+      setSelectedId(null);
+      return;
+    }
+    if (!selectedId || !sortedList.some((t) => t._id === selectedId)) {
+      const first = sortedList[0]!;
+      setSelectedId(first._id);
+      const d = parseLocalDay(first.startDate);
+      setVisibleMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+    }
+  }, [sortedList, selectedId]);
+
+  const selectedTournament = useMemo(
+    () => sortedList.find((t) => t._id === selectedId) ?? null,
+    [sortedList, selectedId],
+  );
+
+  const selectTournament = useCallback((id: string) => {
+    setSelectedId(id);
+    const t = sortedList.find((x) => x._id === id);
+    if (t) {
+      const d = parseLocalDay(t.startDate);
+      setVisibleMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+    }
+  }, [sortedList]);
 
   const [refreshing, setRefreshing] = useState(false);
   const handleRefresh = useCallback(async () => {
@@ -30,6 +70,14 @@ export function TournamentListClient() {
       setRefreshing(false);
     }
   }, [configured, dispatch]);
+
+  const onPrevMonth = useCallback(() => {
+    setVisibleMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1));
+  }, []);
+
+  const onNextMonth = useCallback(() => {
+    setVisibleMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1));
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-mp-bg">
@@ -81,7 +129,7 @@ export function TournamentListClient() {
           </div>
         )}
 
-        {configured && listStatus === "succeeded" && list.length === 0 && (
+        {configured && listStatus === "succeeded" && sortedList.length === 0 && (
           <div
             className="rounded-2xl border border-mp-surface-light bg-mp-surface px-5 py-6 text-center"
             role="status"
@@ -95,14 +143,47 @@ export function TournamentListClient() {
           </div>
         )}
 
-        {list.length > 0 && (
-          <ul className="grid list-none grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {list.map((t) => (
-              <li key={t._id} className="min-w-0">
-                <TournamentCard t={t} />
-              </li>
-            ))}
-          </ul>
+        {sortedList.length > 0 && (
+          <div className="space-y-8">
+            <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+              <div className="lg:col-span-7">
+                <TournamentsCalendar
+                  tournaments={sortedList}
+                  visibleMonth={visibleMonth}
+                  onPrevMonth={onPrevMonth}
+                  onNextMonth={onNextMonth}
+                  selectedId={selectedId}
+                  onSelectTournament={selectTournament}
+                />
+              </div>
+              <div className="lg:col-span-5">
+                <h2 className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow">
+                  Detalle del torneo
+                </h2>
+                <HomeTournamentDetail tournament={selectedTournament} />
+              </div>
+            </div>
+
+            <section aria-labelledby="list-heading">
+              <h2
+                id="list-heading"
+                className="mb-3 text-sm font-bold uppercase italic tracking-wide text-mp-yellow"
+              >
+                Todos los torneos
+              </h2>
+              <ul className="grid list-none grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {sortedList.map((t) => (
+                  <li key={t._id} className="min-w-0">
+                    <TournamentPickCard
+                      t={t}
+                      selected={t._id === selectedId}
+                      onSelect={selectTournament}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
         )}
       </main>
 
